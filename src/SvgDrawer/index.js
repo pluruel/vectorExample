@@ -6,6 +6,8 @@ let id = 0;
 const colors = ["blue", "black", "red", "purple", "green"];
 
 export const DrawContext = createContext("draw");
+const maximumHistoryLen = 2;
+
 const SvgDrawer = () => {
   const svg = useRef();
 
@@ -56,22 +58,26 @@ const SvgDrawer = () => {
         }}
         onMouseUp={(e) => {
           if (!crntRect) return;
-          const next = history > 0 ? datas[history] : [];
-          const nextDatas = history > 0 ? datas.slice(0, history + 1) : [[]];
+          const next = datas[history];
+
+          const minHistory = Math.max(0, history + 1 - maximumHistoryLen);
+          const nextDatas = datas.slice(minHistory, history + 1);
 
           setDatas([
             ...nextDatas,
             [...next, { ...crntRect, color: colors[idx++ % 5] }],
           ]);
-          setHistory(history + 1);
+
+          const nextHistoryPos = Math.min(maximumHistoryLen, history + 1);
+          setHistory(nextHistoryPos);
           setCrntRect(undefined);
           setstartPoint(undefined);
         }}
       >
-        {crntRect ? <Rect data={crntRect} /> : null}
-        {datas[history].map((e, idx) => (
-          <Rect data={e} key={idx} removeItem={removeItem} />
+        {datas[history].map((e) => (
+          <Rect data={e} key={e.id} removeItem={removeItem} />
         ))}
+        {crntRect ? <Rect data={crntRect} /> : null}
       </div>
       <button onClick={() => setEraseMode(!eraseMode)}>erase Mode</button>
       <button onClick={() => history > 0 && setHistory(history - 1)}>

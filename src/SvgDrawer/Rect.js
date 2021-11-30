@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useContext, useEffect } from "react";
 import { DrawContext } from ".";
 
@@ -9,7 +10,6 @@ const Rect = (props) => {
       .rect(data.width, data.height)
       .attr({ fill: data.color, x: data.x, y: data.y });
     rect.click((e) => {
-      console.log(data.id);
       removeItem(data.id);
     });
     return () => rect.remove();
